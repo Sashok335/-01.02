@@ -4,49 +4,39 @@ const roleModel = require('../models/roles');
 const { signToken } = require('../middleware/auth');
 const { httpError } = require('../utils/httpError');
 
-// Хеш для «несуществующего пользователя». Сравнение с ним занимает столько же
-// времени, сколько с настоящим хешем, — иначе по времени ответа можно было бы
-// перебором выяснить, какие email зарегистрированы.
-const DUMMY_HASH = '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
-
 async function login(req, res) {
   const { email, password } = req.body ?? {};
 
   if (!email || !password) throw httpError(400, 'Введите email и пароль');
 
   const { rows } = await pool.query(
-    `SELECT id, email, full_name, password_hash, role_id, is_active, primary_address
+    `SELECT id, email, full_name, password_hash, role_id, primary_address
        FROM users WHERE email = $1`,
     [String(email).trim().toLowerCase()]);
 
   const user = rows[0];
 
-  // Один и тот же ответ на «нет такого email» и «неверный пароль».
-  const fail = () => httpError(401, 'Неверный email или пароль');
-
-  if (!user) {
-    await bcrypt.compare(password, DUMMY_HASH);   // выравниваем время ответа
-    throw fail();
+  if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+    throw httpError(401, 'Неверный email или пароль');
   }
-  if (!(await bcrypt.compare(password, user.password_hash))) throw fail();
-  if (!user.is_active) throw httpError(403, 'Аккаунт отключён');
 
-  // Пароль наружу не отдаём НИКОГДА.
+  const role = await roleModel.findById(user.role_id);
+
   res.json({
-    token: signToken(user),
+    token: signToken(user, role.name),
     user: {
       id: user.id,
       email: user.email,
       fullName: user.full_name,
       primaryAddress: user.primary_address,
-      role: await roleModel.findById(user.role_id),
+      role,
     },
   });
 }
 
 async function me(req, res) {
   const { rows } = await pool.query(
-    `SELECT id, email, full_name, role_id, is_active, primary_address
+    `SELECT id, email, full_name, role_id, primary_address
        FROM users WHERE id = $1`,
     [req.user.id]);
 
@@ -74,13 +64,13 @@ async function updateMe(req, res) {
   }
   if (mail.length > 255 || !EMAIL_RE.test(mail)) details.email = 'Введите корректный email';
   if (currentPassword !== undefined && typeof currentPassword !== 'string') {
-    details.currentPassword = 'Текущий пароль должен быть строкой';
+    details.currentPassword = 'Введите текущий пароль';
   }
   if (newPassword !== undefined && (typeof newPassword !== 'string' || newPassword.length < 8)) {
     details.newPassword = 'Новый пароль должен содержать минимум 8 символов';
   }
   if (primaryAddress !== undefined && typeof primaryAddress !== 'string') {
-    details.primaryAddress = 'Адрес должен быть строкой';
+    details.primaryAddress = 'Некорректный адрес';
   } else if (address.length > 300) {
     details.primaryAddress = 'Адрес — не более 300 символов';
   }
@@ -91,7 +81,7 @@ async function updateMe(req, res) {
   const currentUser = await pool.query(
     `SELECT id, email, full_name, password_hash, role_id
        FROM users
-      WHERE id = $1 AND is_active = TRUE`,
+      WHERE id = $1`,
     [req.user.id]);
   const user = currentUser.rows[0];
   if (!user) throw httpError(404, 'Пользователь не найден');
@@ -137,16 +127,11 @@ async function updateMe(req, res) {
   }
 }
 
-// --- POST /api/auth/register ----------------------------------------------
-// Новый человек сразу становится покупателем и получает свой токен —
-// регистрироваться и потом отдельно входить не нужно.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 async function register(req, res) {
   const { email, password, fullName } = req.body ?? {};
 
-  // Проверяем всё сразу, а не по одному полю: пользователь увидит
-  // все проблемы за один заход, а не по одной за попытку.
   const details = {};
   const mail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
@@ -160,10 +145,8 @@ async function register(req, res) {
   if (Object.keys(details).length) throw httpError(400, 'Проверьте поля формы', details);
 
   const buyer = await roleModel.findByName('buyer');
-  if (!buyer) throw httpError(500, 'Роль покупателя не найдена в базе');
+  if (!buyer) throw httpError(500, 'Не удалось определить роль покупателя');
 
-  // Роль и статус в тело запроса не принимаются: новый человек всегда
-  // покупатель. Иначе можно было бы отправить roleId: 2 и стать админом.
   let rows;
   try {
     ({ rows } = await pool.query(
@@ -172,8 +155,6 @@ async function register(req, res) {
          RETURNING id, email, full_name, role_id, primary_address`,
       [mail, await bcrypt.hash(password, 10), fullName.trim(), buyer.id]));
   } catch (e) {
-    // 23505 — нарушение UNIQUE. На users.email стоит UNIQUE,
-    // это единственное ограничение, которое тут может сработать.
     if (e.code === '23505') {
       throw httpError(409, 'Такой email уже зарегистрирован', { email: 'Этот email уже занят' });
     }
@@ -183,7 +164,7 @@ async function register(req, res) {
   const user = rows[0];
 
   res.status(201).json({
-    token: signToken(user),
+    token: signToken(user, buyer.name),
     user: {
       id: user.id,
       email: user.email,

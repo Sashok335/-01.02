@@ -1,8 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Один пул на всё приложение. Создаётся один раз при загрузке модуля —
-// НИКОГДА не вызывай new Pool() внутри обработчика запроса.
+
 const pool = new Pool({
   host:     process.env.DB_HOST,
   port:     process.env.DB_PORT,

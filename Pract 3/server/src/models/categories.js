@@ -48,8 +48,6 @@ async function update(id, body) {
   return findById(id);
 }
 
-// Товары не удаляем никогда: на категорию ссылается products с RESTRICT,
-// а на товары — покупки. Только гасим.
 async function deactivate(id) {
   const { rowCount } = await pool.query(
     'UPDATE categories SET is_active = FALSE WHERE id = $1', [id]);

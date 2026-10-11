@@ -1,34 +1,25 @@
 const pool = require('../db/pool');
 const { couponImprovesProductDiscount } = require('../utils/couponRules');
-// httpError — не часть Express, а просто Error с полем status.
-// Поэтому модель может им пользоваться, не зная про req и res.
 const { httpError } = require('../utils/httpError');
 
-// Оформление корзины. ВСЁ внутри одной транзакции и одного соединения.
-//
-// Порядок шагов важен: сначала читаем и блокируем всё, что будем менять,
-// и только потом вставляем. Иначе на середине выяснится «товара нет» —
-// и часть покупок уже записана.
+// Все изменения заказа фиксируются вместе или полностью откатываются.
 async function checkout({ userId, items, couponCode, shippingAddress }) {
-  const client = await pool.connect();          // берём ОДНО соединение
+  const client = await pool.connect();
   try {
-    await client.query('BEGIN');                 // начинаем транзакцию
+    await client.query('BEGIN');
 
     const purchaseIds = [];
 
-    // --- 1. Товары: ОДИН запрос на всю корзину ---------------------------
-    // ORDER BY не декоративный: строки блокируются в одном порядке у всех,
-    // поэтому две одновременные корзины не сцепятся в тупик.
     const ids = items.map((i) => Number(i.productId));
+    // Единый порядок блокировки товаров уменьшает риск взаимных блокировок.
     const { rows: products } = await client.query(
       `SELECT id, title, price, discount_percent, stock
          FROM products
         WHERE id = ANY($1::int[]) AND is_active = TRUE
         ORDER BY id
-        FOR UPDATE`,                             // блокируем строки: см. ниже
+        FOR UPDATE`,
       [ids]);
 
-    // Проверяем всю корзину ДО того, как что-то вставили.
     const byId = new Map(products.map((p) => [p.id, p]));
 
     for (const item of items) {
@@ -37,43 +28,39 @@ async function checkout({ userId, items, couponCode, shippingAddress }) {
 
       if (!p) throw httpError(400, `Товар ${item.productId} не найден`);
       if (!Number.isInteger(qty) || qty < 1) {
-        throw httpError(400, 'Количество должно быть целым и положительным');
+        throw httpError(400, 'Количество должно быть целым положительным числом');
       }
       if (p.stock !== null && p.stock < qty) {
-        throw httpError(409, `«${p.title}» осталось всего ${p.stock}`);
+        throw httpError(409, `Товара «${p.title}» осталось только ${p.stock} шт.`);
       }
     }
 
-    // --- 2. Купон: ОДИН запрос на весь заказ ------------------------------
-    // Код вводится один, значит и купон в заказе может быть только один.
     let coupon = null;
 
     if (couponCode) {
       const { rows } = await client.query(
         `SELECT id, code, discount_percent, min_order_amount, user_id, product_id
            FROM coupons
-          WHERE code = $1 AND is_used = FALSE AND expires_at >= CURRENT_DATE
+          WHERE code = $1 AND is_used = FALSE
           FOR UPDATE`,
         [couponCode]);
 
-      if (!rows[0]) throw httpError(400, 'Купон не найден, истёк или уже использован');
+      if (!rows[0]) throw httpError(400, 'Купон не найден или уже использован');
       coupon = rows[0];
 
       if (coupon.user_id !== null && Number(coupon.user_id) !== Number(userId)) {
         throw httpError(400, 'Этот персональный купон выдан другому покупателю');
       }
       if (coupon.product_id !== null && !byId.has(Number(coupon.product_id))) {
-        throw httpError(400, 'Купон действует только на товар, которого нет в корзине');
+        throw httpError(400, 'Купон действует на другой товар — его нет в корзине');
       }
 
-      // Минимальная сумма — считаем по ВСЕЙ корзине, а не по позиции:
-      // покупателю неважно, в одной строке его товар или в трёх.
       const cartTotal = items.reduce(
         (sum, it) => sum + Number(byId.get(Number(it.productId)).price) * Number(it.quantity),
         0);
 
       if (coupon.min_order_amount !== null && cartTotal < Number(coupon.min_order_amount)) {
-        throw httpError(400, `Купон ${coupon.code} действует от ${coupon.min_order_amount} ₽`);
+        throw httpError(400, `Купон ${coupon.code} действует при сумме заказа от ${coupon.min_order_amount} ₽`);
       }
 
       const canImproveDiscount = items.some((item) =>
@@ -84,20 +71,16 @@ async function checkout({ userId, items, couponCode, shippingAddress }) {
         ));
 
       if (!canImproveDiscount) {
-        throw httpError(400, 'Скидка по купону не выше уже действующей скидки на товар');
+        throw httpError(400, 'Скидка по купону не выгоднее скидки, которая уже действует на товар');
       }
     }
 
-    // --- 3. Строки покупок ------------------------------------------------
     let couponWasUsed = false;
 
     for (const item of items) {
       const p = byId.get(Number(item.productId));
       const qty = Number(item.quantity);
 
-      // Скидка: максимум из товара и купона. Они НЕ складываются.
-      // Купон на товар подходит только к своему товару, поэтому проверка
-      // именно здесь, внутри цикла, а не один раз до него.
       const couponFits = coupon !== null
         && couponImprovesProductDiscount(coupon, userId, p);
 
@@ -127,9 +110,6 @@ async function checkout({ userId, items, couponCode, shippingAddress }) {
       }
     }
 
-    // --- 4. Платежи --------------------------------------------------------
-    // По одному на каждую покупку. Сумму берём из строки покупки, а не считаем
-    // заново: total_price уже посчитан GENERATED-столбцом.
     for (const purchaseId of purchaseIds) {
       await client.query(
         `INSERT INTO payments (user_id, purchase_id, amount, method)
@@ -137,14 +117,12 @@ async function checkout({ userId, items, couponCode, shippingAddress }) {
         [userId, purchaseId]);
     }
 
-    // --- 5. Купон тратится, только если реально дал скидку -----------------
     if (couponWasUsed) {
       await client.query('UPDATE coupons SET is_used = TRUE WHERE id = $1', [coupon.id]);
     }
 
-    await client.query('COMMIT');                // всё сошлось — фиксируем
+    await client.query('COMMIT');
 
-    // Что именно купили — одним запросом к представлению.
     const { rows } = await client.query(
       `SELECT * FROM v_purchases_detailed
         WHERE "purchaseId" = ANY($1::int[])
@@ -153,10 +131,10 @@ async function checkout({ userId, items, couponCode, shippingAddress }) {
 
     return rows;
   } catch (e) {
-    await client.query('ROLLBACK');              // что-то сломалось — откатываем всё
+    await client.query('ROLLBACK');
     throw e;
   } finally {
-    client.release();                            // возвращаем соединение в пул
+    client.release();
   }
 }
 

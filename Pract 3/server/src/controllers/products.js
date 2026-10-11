@@ -1,9 +1,7 @@
 const model = require('../models/products');
 const { httpError } = require('../utils/httpError');
 
-// --- helper: как Express 5 разбирает query -------------------------------
 function listQuery(query) {
-  // ?categoryIds=1,3,5 -> [1, 3, 5]; мусорные значения отбрасываем.
   const categoryIds = (query.categoryIds ?? '')
     .split(',')
     .map((s) => Number(s.trim()))
@@ -54,8 +52,6 @@ function validateProduct(body) {
   return errors;
 }
 
-// Разбор тела в значения нужных типов. Вызывается ПОСЛЕ validateProduct,
-// поэтому к этому моменту значения уже известно-пригодны.
 function toProductArgs(body) {
   return {
     title: body.title.trim(),
@@ -70,7 +66,6 @@ function toProductArgs(body) {
   };
 }
 
-// --- GET /api/products -----------------------------------------------------
 async function list(req, res) {
   res.json(await model.list(listQuery(req.query)));
 }
@@ -79,7 +74,6 @@ async function listAll(req, res) {
   res.json(await model.list({ ...listQuery(req.query), includeInactive: true }));
 }
 
-// --- GET /api/products/:id -------------------------------------------------
 async function getOne(req, res) {
   const id = positiveInt(req.params.id, 'id');
 
@@ -89,33 +83,27 @@ async function getOne(req, res) {
   res.json(product);
 }
 
-// --- POST /api/products ----------------------------------------------------
 async function create(req, res) {
   const body = req.body ?? {};
 
   const errors = validateProduct(body);
   if (Object.keys(errors).length) {
-    throw httpError(400, 'Проверь правильность полей', errors);
+    throw httpError(400, 'Проверьте правильность полей', errors);
   }
 
   try {
     res.status(201).json(await model.create(toProductArgs(body)));
   } catch (e) {
-    // 23503 — такой категории нет в базе. Клиенту нужен его собственный текст,
-    // а не «violates foreign key constraint».
     if (e.code === '23503') throw httpError(400, 'Такой категории не существует');
     if (e.code === '23514') throw httpError(400, 'Недопустимое значение поля');
     throw e;
   }
 }
 
-// --- PATCH /api/products/:id ----------------------------------------------
 async function update(req, res) {
   const id = positiveInt(req.params.id, 'id');
   const body = req.body ?? {};
 
-  // Проверяем только те поля, которые реально пришли: PATCH не требует
-  // полного набора, иначе частичное обновление невозможно.
   const errors = {};
   if ('title' in body && !body.title?.trim()) errors.title = 'Название не может быть пустым';
   if ('categoryId' in body && !Number.isInteger(Number(body.categoryId))) {
@@ -135,9 +123,9 @@ async function update(req, res) {
     if (!Number.isInteger(st) || st < 0) errors.stock = 'Остаток — целое число не меньше 0';
   }
   if ('isActive' in body && typeof body.isActive !== 'boolean') {
-    errors.isActive = 'Статус товара должен быть активен или выключен';
+    errors.isActive = 'Укажите, активен товар или скрыт';
   }
-  if (Object.keys(errors).length) throw httpError(400, 'Проверь правильность полей', errors);
+  if (Object.keys(errors).length) throw httpError(400, 'Проверьте правильность полей', errors);
 
   try {
     const product = await model.update(id, body);
@@ -149,7 +137,6 @@ async function update(req, res) {
   }
 }
 
-// --- DELETE /api/products/:id ---------------------------------------------
 async function remove(req, res) {
   const id = positiveInt(req.params.id, 'id');
 

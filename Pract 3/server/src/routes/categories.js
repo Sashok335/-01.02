@@ -2,16 +2,14 @@ const router = require('express').Router();
 const ctrl = require('../controllers/categories');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
-const canManageGoods = [requireAuth, requireRole('canManageGoods')];
+const admin = [requireAuth, requireRole('admin')];
 
-router.get('/admin/all', ...canManageGoods, ctrl.listAll);
+router.get('/admin/all', ...admin, ctrl.listAll);
 router.get('/',             ctrl.list);
 router.get('/:id',          ctrl.getOne);
 
-// Управление каталогом — только с правом canManageGoods
-// (админ и менеджер; у покупателя этого флага нет).
-router.post('/',            ...canManageGoods, ctrl.create);
-router.patch('/:id',        ...canManageGoods, ctrl.update);
-router.delete('/:id',       ...canManageGoods, ctrl.remove);
+router.post('/',            ...admin, ctrl.create);
+router.patch('/:id',        ...admin, ctrl.update);
+router.delete('/:id',       ...admin, ctrl.remove);
 
 module.exports = router;

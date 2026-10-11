@@ -1,18 +1,25 @@
 require('dotenv').config();
-const app = require('./app');
+const express = require('express');
+const cors = require('cors');
+const routes = require('./routes');
+const errorHandler = require('./middleware/errorHandler');
 const pool = require('./db/pool');
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
+app.use('/api', routes);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 
 const server = app.listen(PORT, () => {
   console.log(`[server] запущен на http://localhost:${PORT}`);
   console.log('[server] проверка:');
-  console.log(`  GET http://localhost:${PORT}/api/health`);
   console.log(`  GET http://localhost:${PORT}/api/products`);
 });
 
-// Аккуратно гасим сервер: сначала перестаём принимать запросы,
-// потом закрываем пул, иначе процесс зависнет на открытых соединениях.
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, async () => {
     console.log(`\n[server] получен ${signal}, останавливаюсь`);

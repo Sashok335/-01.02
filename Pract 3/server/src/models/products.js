@@ -1,7 +1,5 @@
 const pool = require('../db/pool');
 
-// snake_case -> camelCase делает БД (алиасы AS "...").
-// Об этом docs/01-database.md, раздел 1.10.
 const FIELDS = `
   p.id               AS "productId",
   p.category_id      AS "categoryId",
@@ -23,8 +21,7 @@ const FROM = `
   JOIN categories c ON c.id = p.category_id
 `;
 
-// Сортировку нельзя склеить из того, что прислал клиент: иначе через
-// ORDER BY можно было бы подставить что угодно. Поэтому белый список.
+// Только эти фиксированные SQL-фрагменты используются в ORDER BY.
 const SORTS = {
   title: 'p.title',
   price: 'p.price',
@@ -48,7 +45,6 @@ async function list({
     where.push(`(p.title ILIKE $${params.length} OR p.description ILIKE $${params.length})`);
   }
 
-  // Чекбоксы в aside присылают [1,3,5]. ANY проверяет вхождение в массив.
   if (Array.isArray(categoryIds) && categoryIds.length > 0) {
     params.push(categoryIds);
     where.push(`p.category_id = ANY($${params.length}::int[])`);
@@ -87,8 +83,6 @@ async function create({ title, description, categoryId, price, discountPercent, 
   return findById(rows[0].id);
 }
 
-// Меняем только те поля, которые реально пришли. Без этого
-// `SET title = $1` безусловно затёр бы товар отсутствующими полями.
 const UPDATABLE = {
   title: 'title',
   description: 'description',
@@ -114,8 +108,6 @@ async function update(id, body) {
   return findById(id);
 }
 
-// Мягкое удаление: строка остаётся, потому что на неё ссылаются покупки
-// (ON DELETE RESTRICT). Меняем признак, а не удаляем.
 async function deactivate(id) {
   const { rowCount } = await pool.query(
     'UPDATE products SET is_active = FALSE WHERE id = $1', [id]);

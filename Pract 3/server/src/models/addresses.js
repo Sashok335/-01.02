@@ -18,7 +18,7 @@ async function createForUser(userId, { label, address }) {
   try {
     await client.query('BEGIN');
     const { rows: users } = await client.query(
-      'SELECT id FROM users WHERE id = $1 AND is_active = TRUE FOR UPDATE',
+      'SELECT id FROM users WHERE id = $1 FOR UPDATE',
       [userId]);
     if (!users[0]) throw httpError(404, 'Пользователь не найден');
 

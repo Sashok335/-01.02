@@ -1,5 +1,3 @@
-// Проверка связи с базой до написания сервера.
-// node src/db/check.js
 const pool = require('./pool');
 
 pool.query('SELECT NOW() AS now', (err, res) => {
