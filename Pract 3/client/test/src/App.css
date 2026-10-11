@@ -1,0 +1,1306 @@
+/* from here was taken from https://uiverse.io/KlaujonRuamni/evil-sheep-56 */
+.beautiful-button {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(to bottom, var(--button-first), var(--button-second));
+ /* Gradient background */
+  color: white;
+ /* White text color */
+  font-family: "Segoe UI", sans-serif;
+ /* Stylish and legible font */
+  font-weight: bold;
+  font-size: 14px;
+ /* Large font size */
+  border: none;
+ /* No border */
+  border-radius: 30px;
+ /* Rounded corners */
+  padding: 8px 16px;
+ /* Large padding */
+  cursor: pointer;
+ /* Cursor on hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+ /* Subtle shadow */
+  animation: button-shimmer 2s infinite;
+  transition: all 0.3s ease-in-out;
+ /* Smooth transition */
+ margin-top: 10px;
+
+}
+
+/* Hover animation */
+.beautiful-button:hover {
+  background: linear-gradient(to bottom, var(--button-second), var(--button-first));
+  animation: button-particles 1s ease-in-out infinite;
+  transform: translateY(-2px);
+}
+
+/* Click animation */
+.beautiful-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Shimmer animation */
+@keyframes button-shimmer {
+  0% {
+    background-position: left top;
+  }
+
+  100% {
+    background-position: right bottom;
+  }
+}
+/* Particle animation */
+@keyframes button-particles {
+  0% {
+    background-position: left top;
+  }
+
+  100% {
+    background-position: right bottom;
+  }
+}
+/* to here was taken from https://uiverse.io/KlaujonRuamni/evil-sheep-56 */
+
+
+.nav-bar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 20;
+  padding: 12px 24px 0;
+  box-sizing: border-box;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  width: min(100%, 1180px);
+  min-height: 66px;
+  margin: 0 auto;
+  padding: 0 18px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  background: linear-gradient(110deg, rgba(24, 25, 53, 0.97), rgba(55, 47, 105, 0.96));
+  box-shadow: 0 12px 32px rgba(13, 12, 31, 0.24);
+  backdrop-filter: blur(16px);
+}
+
+.nav-brand,
+.nav-link,
+.nav-account,
+.nav-login,
+.nav-logout {
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  text-decoration: none;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.nav-brand-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #d17cff, #8c45ed);
+  box-shadow: 0 5px 14px rgba(160, 76, 244, 0.35);
+  color: white;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.nav-brand-accent {
+  color: #d7a7ff;
+}
+
+.nav-links,
+.nav-actions {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links {
+  gap: 6px;
+  flex: 1;
+}
+
+.nav-link,
+.nav-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.nav-link:hover,
+.nav-login:hover,
+.nav-logout:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.nav-link.active,
+.nav-login.active {
+  color: white;
+  background: rgba(193, 129, 255, 0.19);
+  box-shadow: inset 0 0 0 1px rgba(206, 159, 255, 0.18);
+}
+
+.nav-actions {
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.nav-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 4px 12px 4px 5px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 650;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.nav-account:hover,
+.nav-account.active {
+  border-color: rgba(214, 177, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-avatar {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #bd76f5, #7041ca);
+  color: white;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.nav-logout {
+  min-height: 38px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 28px;
+  margin: 0 3px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.nav-theme {
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.nav-theme .switch {
+  transform: scale(0.82);
+  transform-origin: center;
+}
+
+.cart-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 5px;
+  color: #f7edff;
+  background: rgba(185, 110, 255, 0.28);
+  border: 1px solid rgba(218, 180, 255, 0.2);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+img{
+  height: 210px;
+  width: 270px;
+  border-radius:30px 30px 0 0;
+}
+/* Раскладка: слева aside с чекбоксами, справа каталог.
+   На телефоне aside встаёт сверху одной колонкой. */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 110px auto 50px;
+  padding: 0 20px;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    margin-top: 100px;
+  }
+}
+
+.sidebar {
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+  padding: 20px;
+  position: sticky;
+  top: 100px;          /* при прокрутке панель остаётся на виду */
+}
+
+.sidebar-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sidebar-head h2 {
+  margin: 0;
+  font-size: 20px;
+  color: white;
+}
+
+.sidebar-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.sidebar-buttons button {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.sidebar-buttons button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-list {
+  list-style: none;
+  margin: 15px 0 0;
+  padding: 0;
+}
+
+.sidebar-list label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: white;
+}
+
+.sidebar-list label:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-discount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toolbar input,
+.toolbar select {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--page-border);
+  background: var(--page-background);
+  color: var(--page-text);
+  font-size: 16px;
+}
+
+.cardss {
+  display:grid;
+  grid-template-columns: repeat(3, 270px);
+  margin: 20px 0 50px;
+  gap:30px;
+  justify-content: start;
+}
+
+@media (max-width: 1100px) {
+  .cardss { grid-template-columns: repeat(2, 270px); justify-content: center; }
+}
+
+@media (max-width: 620px) {
+  .cardss { grid-template-columns: 270px; }
+}
+
+.cardd {
+  position: relative;
+  height: 430px;
+  width: 270px;
+  background: var(--card-background);
+  border-radius: 30px;
+  border:3px solid #a19898;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Название обрезаем двумя строками: высота карточки фиксированная,
+   а товары бывают с длинными названиями — без этого текст вылезает. */
+.cardd h2 {
+  color: white;
+  font-size: 19px;
+  margin: 12px 12px 4px;
+  min-height: 2.6em;          /* резервируем место, чтобы карточки были одной высоты */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardd .muted {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  margin: 0 12px 10px;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #9500ff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.card-price {
+  margin: 8px 0 4px;
+}
+
+.card-price b {
+  font-size: 19px;
+}
+
+.card-price s {
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 8px;
+}
+
+.plusminus{
+  display: flex;
+  gap:10px;
+  justify-content: center;
+
+}
+
+/* Корзина: слева позиции, справа блок оформления.
+   На узком экране он уходит вниз под товары. */
+.cart-page {
+  max-width: 1150px;
+  margin: 100px auto 50px;
+  padding: 0 20px;
+}
+
+.cart-page > h2 {
+  text-align: left;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 25px;
+  align-items: start;   /* блок оформления не тянется во всю высоту */
+}
+
+.cart-lines {
+  min-width: 0;
+  max-height: min(820px, calc(100dvh - 180px));
+  min-height: 120px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
+}
+
+.cart-lines::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cart-lines::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(205, 158, 255, 0.4);
+}
+
+.cart-lines::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.cart-item img {
+  width: 100px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 20px;
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.cart-item-name {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.cart-item-info .muted {
+  margin: 0;
+}
+
+/* Правая часть строки: сумма позиции и удаление. */
+.cart-item-sum {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  text-align: right;
+}
+
+.cart-clear {
+  text-align: right;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: underline;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: #fff;
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 25px;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+  text-align: left;
+  position: sticky;      /* при прокрутке длинной корзины форма остаётся на виду */
+  top: 100px;
+}
+
+.checkout-form h3 {
+  margin: 0;
+  color: white;
+  text-align: center;
+}
+
+.checkout-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: white;
+}
+
+.checkout-form input {
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+}
+
+.checkout-form select,
+.checkout-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(12, 12, 22, 0.32);
+  color: white;
+  font: inherit;
+}
+
+.checkout-form textarea {
+  resize: vertical;
+}
+
+.checkout-form option {
+  background: #272438;
+  color: white;
+}
+
+.delivery-addresses,
+.add-address,
+.saved-addresses {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.saved-addresses,
+.add-address {
+  padding: 12px;
+  border: 1px solid rgba(183, 143, 222, 0.24);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.address-toggle {
+  align-self: flex-start;
+  padding: 9px 13px;
+  border: 1px solid rgba(205, 158, 255, 0.34);
+  border-radius: 12px;
+  background: rgba(157, 75, 219, 0.12);
+  color: #e8ccff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.address-toggle:hover {
+  border-color: rgba(205, 158, 255, 0.7);
+  background: rgba(157, 75, 219, 0.24);
+}
+
+.saved-address {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: white;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.saved-address .link-button {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.address-add-button {
+  align-self: flex-start;
+}
+
+.checkout-form .address-add-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Итог отделён линией — это главное число на форме. */
+.checkout-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.checkout-total b {
+  font-size: 24px;
+}
+
+/* --- Формы входа и админки ------------------------------------------------ */
+
+.form-page {
+  margin-top: 120px;
+  text-align: center;
+}
+
+.shop-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 auto 40px;
+  padding: 30px;
+  width: 440px;
+  max-width: 92%;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+  text-align: left;
+}
+
+.shop-form h2 {
+  color: white;
+  text-align: center;
+}
+
+.shop-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: white;
+}
+
+.shop-form input,
+.shop-form select,
+.shop-form textarea {
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.shop-form input.invalid,
+.shop-form select.invalid {
+  outline: 2px solid #ff5c6c;
+}
+
+.shop-form button {
+  align-self: center;
+}
+
+/* --- Вкладки (вход/регистрация, разделы админки) ------------------------- */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 0 auto 20px;
+  width: 440px;
+  max-width: 92%;
+  padding: 6px;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+}
+
+.tab {
+  flex: 1;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 24px;
+  background: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: white;
+}
+
+.tab-active {
+  background: linear-gradient(to bottom, var(--button-first), var(--button-second));
+  color: white;
+  font-weight: bold;
+}
+
+/* В кабинете и админке вкладки шире и прижаты влево, а не по центру. */
+.dashboard .tabs {
+  max-width: 560px;
+  margin: 0 0 25px;
+}
+
+.radio-row {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-row label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* --- Кабинет ------------------------------------------------------------- */
+
+.dashboard {
+  margin: 110px auto 60px;
+  padding: 0 20px;
+  max-width: 1100px;
+  text-align: left;
+}
+
+.dashboard h2 {
+  color: var(--text-h);
+  margin: 30px 0 15px;
+}
+
+/* Шапка: кружок с первой буквой, имя, роль и кнопки справа. */
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 25px;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 30px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 66px;
+  height: 66px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, var(--button-first), var(--button-second));
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.profile-info p {
+  margin: 4px 0 8px;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.profile-edit-button {
+  padding: 9px 15px;
+  border: 1px solid rgba(205, 158, 255, 0.42);
+  border-radius: 14px;
+  background: rgba(157, 75, 219, 0.16);
+  color: #e8ccff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.profile-edit-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(205, 158, 255, 0.72);
+  background: rgba(157, 75, 219, 0.3);
+}
+
+.profile-edit-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  max-width: none;
+  margin: 22px 0 35px;
+  padding: 24px;
+  box-sizing: border-box;
+  border: 1px solid rgba(183, 143, 222, 0.34);
+  border-radius: 24px;
+}
+
+.profile-edit-form > div,
+.profile-edit-form > p,
+.profile-edit-form > button {
+  grid-column: 1 / -1;
+}
+
+.profile-edit-form h3 {
+  margin: 4px 0 5px;
+  color: white;
+}
+
+.profile-edit-form .muted {
+  font-size: 13px;
+}
+
+.profile-edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: white;
+  font-size: 14px;
+}
+
+.profile-edit-form input {
+  width: 100%;
+  padding: 10px 13px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(12, 12, 22, 0.26);
+  color: white;
+  font: inherit;
+}
+
+.profile-edit-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(12, 12, 22, 0.26);
+  color: white;
+  font: inherit;
+  resize: vertical;
+}
+
+.profile-edit-form input:focus {
+  outline: 2px solid rgba(189, 118, 245, 0.7);
+}
+
+.profile-edit-form .beautiful-button {
+  justify-self: start;
+}
+
+.role-chip,
+.status-chip {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Четыре плитки с числами — сразу видно, сколько потрачено. */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  background: var(--card-background);
+  border: 3px solid #a19898;
+  border-radius: 24px;
+}
+
+.stat b {
+  font-size: 22px;
+  color: white;
+}
+
+.accent {
+  color: #9500ff !important;
+}
+
+.status-chip.ok      { background: rgba(60, 200, 120, 0.35); }
+.status-chip.bad     { background: rgba(255, 92, 108, 0.35); }
+.status-chip.pending { background: rgba(240, 180, 60, 0.35); }
+
+.coupon-off {
+  font-weight: bold;
+  color: #9500ff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-background);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  text-align: left;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.table th {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.dashboard .section-heading h2 {
+  margin: 4px 0 0;
+}
+
+.section-heading > p {
+  max-width: 360px;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.section-eyebrow,
+.coupon-code-label {
+  color: #bd76f5;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.coupon {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 20px 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(168, 94, 230, 0.18), transparent 42%),
+    var(--card-background);
+  border: 1px solid rgba(183, 143, 222, 0.34);
+  border-radius: 20px;
+  color: white;
+}
+
+.coupon-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.coupon-code {
+  font-size: 20px;
+  letter-spacing: 1.2px;
+}
+
+.coupon-description {
+  max-width: 600px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.coupon-details {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-content: center;
+  justify-items: start;
+  gap: 8px 16px;
+  flex: 0 0 auto;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.coupon .muted {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.coupon-off {
+  grid-row: span 3;
+  align-self: center;
+  padding: 8px 11px;
+  border: 1px solid rgba(207, 164, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(157, 75, 219, 0.2);
+  color: #e3c3ff;
+  font-size: 18px;
+}
+
+.coupon-condition {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .nav-bar {
+    padding: 8px 12px 0;
+  }
+
+  .site-nav {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    min-height: auto;
+    padding: 9px 12px;
+    border-radius: 18px;
+  }
+
+  .nav-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    grid-column: 2;
+    grid-row: 1;
+    gap: 6px;
+  }
+
+  .nav-link,
+  .nav-login {
+    min-height: 34px;
+    padding: 0 12px;
+  }
+
+  .nav-account {
+    min-height: 36px;
+    padding-right: 8px;
+  }
+
+  .nav-logout {
+    padding: 0 7px;
+  }
+
+  .coupon {
+    flex-direction: column;
+    gap: 15px;
+    padding: 17px;
+  }
+
+  .coupon-details {
+    grid-template-columns: auto 1fr;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+    border-left: 0;
+  }
+
+  .coupon-condition {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-bar {
+    padding-inline: 8px;
+  }
+
+  .site-nav {
+    padding-inline: 9px;
+  }
+
+  .nav-brand {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .nav-brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .nav-account-name,
+  .nav-logout,
+  .nav-divider {
+    display: none;
+  }
+
+  .nav-actions {
+    gap: 2px;
+  }
+
+  .nav-account {
+    padding: 2px;
+  }
+
+  .nav-theme .switch {
+    transform: scale(0.72);
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.admin-grid > .shop-form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.admin-grid h3 {
+  color: var(--text-h);
+  margin: 0 0 12px;
+}
+
+.admin-grid > div {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.admin-grid .table {
+  min-width: 620px;
+}
+
+.danger-link {
+  color: #ff9da7;
+}
+
+.danger-link:hover {
+  color: #ff626f;
+}
+
+@media (max-width: 1050px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .profile-edit-form {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .profile-edit-form > div,
+  .profile-edit-form > p,
+  .profile-edit-form > button {
+    grid-column: 1;
+  }
+
+  .profile-card {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .profile-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+}
+
+/* --- Общие мелочи -------------------------------------------------------- */
+
+.muted {
+  color: var(--text);
+  opacity: 0.75;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Таблица не должна ломать вёрстку длинными словами. */
+.nowrap {
+  white-space: nowrap;
+}
+
+.error {
+  color: #ff5c6c;
+}
+
+.ok-text {
+  color: #3cc878;
+}
+
+.empty,
+.error {
+  margin: 20px 0;
+}
